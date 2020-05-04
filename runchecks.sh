@@ -5,25 +5,25 @@ if [[ -z "$INPUT_GITHUB_TOKEN" ]]; then
 	exit 1
 fi
 
-FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
-echo "Files = $FILES_LINK"
+# FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
+# echo "Files = $FILES_LINK"
 
-curl $FILES_LINK > files.json
-FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
+# curl $FILES_LINK > files.json
+# FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
 
-readarray -t URLS <<<"$FILES_URLS_STRING"
+# readarray -t URLS <<<"$FILES_URLS_STRING"
 
-echo "File names: $URLS"
+# echo "File names: $URLS"
 
-mkdir files
-cd files
-for i in "${URLS[@]}"
-do
-   echo "Downloading $i"
-   curl -LOk --remote-name $i 
-done
+# mkdir files
+# cd files
+# for i in "${URLS[@]}"
+# do
+#    echo "Downloading $i"
+#    curl -LOk --remote-name $i 
+# done
 
-echo "Files downloaded!"
+# echo "Files downloaded!"
 echo "Performing checkup:"
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
