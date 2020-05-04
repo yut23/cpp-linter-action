@@ -24,17 +24,20 @@ fi
 # done
 
 # echo "Files downloaded!"
+
+# save current location
+REPO_PATH=$(pwd)
+
 echo "Performing checkup:"
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
 bear make $INPUT_MAKE_OPTIONS
 
 clang-tidy --version
-python3 ~/run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > clang-tidy-report.txt
+python3 $GITHUB_WORKSPACE/run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > clang-tidy-report.txt
 # clang-tidy *.c *.h *.cpp *.hpp *.C *.cc *.CPP *.c++ *.cp *.cxx *.H -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
 
-cd
-cd files
+cd $REPO_PATH
 find . -regex '.*\.\(cpp\|h\|H\)' | xargs clang-format --style=llvm -i > clang-format-report.txt
 
 cppcheck --enable=all --force --std=c++11 --language=c++ --output-file=cppcheck-report.txt *
