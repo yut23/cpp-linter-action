@@ -3,8 +3,9 @@
 # save current location
 REPO_PATH=$(pwd)
 ls
+ls $GITHUB_WORKSPACE
 
-cp run-clang-tidy.py $INPUT_BUILD_PATH
+cp $GITHUB_WORKSPACE/run-clang-tidy.py $INPUT_BUILD_PATH
 
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
