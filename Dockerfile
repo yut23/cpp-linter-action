@@ -11,6 +11,6 @@ RUN apt-get update
 RUN apt-get -qq -y install curl clang-tidy cmake jq clang cppcheck clang-format bear g++ gfortran 
 
 COPY runchecks.sh /entrypoint.sh
-COPY run-clang-tidy.py /run-clang-tidy.py
+COPY run-clang-tidy.py $GITHUB_WORKSPACE/run-clang-tidy.py
 COPY . .
 CMD ["bash", "/entrypoint.sh"]
