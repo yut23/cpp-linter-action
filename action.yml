@@ -4,6 +4,20 @@ author: ArtificialAmateur
 branding:
   icon: alert-circle
   color: green
+inputs:
+  github_token:
+    description: 'Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}'
+    required: true
+  build_path:
+    description: 'Path to executable'
+    required: true 
+  make_options:
+    description: 'Makefile options to be used by clang-tidy'
+    required: false
+  ignore_files:
+    description: 'A regex which clang-tidy uses to ignore files'
+    required: false
+
 runs:
   using: 'docker'
   image: 'Dockerfile'

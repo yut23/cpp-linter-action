@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: c-linter
-        uses: ArtificialAmateur/clang-tidy-action@master
-    env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: AMReX-Astro/clang-tidy-action@master
+        with: 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          build_path: /path/to/executable
 ```
+
+There are also the options `make_options` which defines the Make arguments that shall be used by `clang-tidy`, and `ignore_files` which defines a regex which `clang-tidy` uses to ignore files. 

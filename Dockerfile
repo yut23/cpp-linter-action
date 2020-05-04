@@ -10,7 +10,7 @@ LABEL maintainer="ArtificialAmateur <20297606+ArtificialAmateur@users.noreply.gi
 
 WORKDIR /build
 RUN apt-get update
-RUN apt-get -qq -y install curl clang-tidy cmake jq clang cppcheck clang-format
+RUN apt-get -qq -y install curl clang-tidy cmake jq clang cppcheck clang-format bear
 
 ADD runchecks.sh /entrypoint.sh
 COPY . .

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ -z "$GITHUB_TOKEN" ]]; then
+if [[ -z "$INPUT_GITHUB_TOKEN" ]]; then
 	echo "The GITHUB_TOKEN is required."
 	exit 1
 fi
@@ -25,12 +25,19 @@ done
 
 echo "Files downloaded!"
 echo "Performing checkup:"
+cd $INPUT_BUILD_PATH
+# make the compile command database using bear
+bear make $INPUT_MAKE_OPTIONS
+
 clang-tidy --version
-clang-tidy *.c *.h *.cpp *.hpp *.C *.cc *.CPP *.c++ *.cp *.cxx -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
+python3 ~/run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > clang-tidy-report.txt
+# clang-tidy *.c *.h *.cpp *.hpp *.C *.cc *.CPP *.c++ *.cp *.cxx *.H -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
 
-clang-format --style=llvm -i *.c *.h *.cpp *.hpp *.C *.cc *.CPP *.c++ *.cp *.cxx > clang-format-report.txt
+cd
+cd files
+find . -regex '.*\.\(cpp\|h\|H\)' | xargs clang-format --style=llvm -i > clang-format-report.txt
 
-cppcheck --enable=all --std=c++11 --language=c++ --output-file=cppcheck-report.txt *
+cppcheck --enable=all --force --std=c++11 --language=c++ --output-file=cppcheck-report.txt *
 
 PAYLOAD_TIDY=`cat clang-tidy-report.txt`
 PAYLOAD_FORMAT=`cat clang-format-report.txt`
@@ -62,4 +69,4 @@ OUTPUT+=$'\n```\n'
 
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
-curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
+curl -s -S -H "Authorization: token $INPUT_GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
