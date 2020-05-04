@@ -3,13 +3,14 @@
 # save current location
 REPO_PATH=$(pwd)
 
-echo "Performing checkup:"
+cp run-clang-tidy.py $INPUT_BUILD_PATH
+
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
 bear make $INPUT_MAKE_OPTIONS
 
 clang-tidy --version
-python3 $REPO_PATH/run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -j 2 -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > $GITHUB_WORKSPACE/clang-tidy-report.txt
+python3 run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -j 2 -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > $GITHUB_WORKSPACE/clang-tidy-report.txt
 # clang-tidy *.c *.h *.cpp *.hpp *.C *.cc *.CPP *.c++ *.cp *.cxx *.H -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
 
 cd $REPO_PATH
