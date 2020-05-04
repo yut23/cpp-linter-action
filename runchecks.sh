@@ -34,18 +34,19 @@ cd $INPUT_BUILD_PATH
 bear make $INPUT_MAKE_OPTIONS
 
 clang-tidy --version
-python3 $GITHUB_WORKSPACE/run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > clang-tidy-report.txt
+python3 $GITHUB_WORKSPACE/run-clang-tidy.py -header-filter='.*' -ignore-files=$INPUT_IGNORE_FILES -j 2 -checks='bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' > $GITHUB_WORKSPACE/clang-tidy-report.txt
 # clang-tidy *.c *.h *.cpp *.hpp *.C *.cc *.CPP *.c++ *.cp *.cxx *.H -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
 
 cd $REPO_PATH
-find . -regex '.*\.\(cpp\|h\|H\)' | xargs clang-format --style=llvm -i > clang-format-report.txt
+find . -regex '.*\.\(cpp\|h\|H\)' | xargs clang-format --style=llvm -i > $GITHUB_WORKSPACE/clang-format-report.txt
 
-cppcheck --enable=all --force --std=c++11 --language=c++ --output-file=cppcheck-report.txt *
+cppcheck --enable=all --force --std=c++11 --language=c++ --output-file=$GITHUB_WORKSPACE/cppcheck-report.txt *
+
+cd $GITHUB_WORKSPACE
 
 PAYLOAD_TIDY=`cat clang-tidy-report.txt`
 PAYLOAD_FORMAT=`cat clang-format-report.txt`
 PAYLOAD_CPPCHECK=`cat cppcheck-report.txt`
-COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
   
 echo $COMMENTS_URL
 echo "Clang-tidy errors:"
@@ -54,22 +55,3 @@ echo "Clang-format errors:"
 echo $PAYLOAD_FORMAT
 echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
-
-OUTPUT=$'**CLANG-TIDY WARNINGS**:\n'
-OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_TIDY"
-OUTPUT+=$'\n```\n'
-
-OUTPUT=$'**CLANG-FORMAT WARNINGS**:\n'
-OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_FORMAT"eCTF20/mb/drm_audio_fw/src on
-OUTPUT+=$'\n```\n'
-
-OUTPUT+=$'\n**CPPCHECK WARNINGS**:\n'
-OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_CPPCHECK"
-OUTPUT+=$'\n```\n' 
-
-PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
-
-curl -s -S -H "Authorization: token $INPUT_GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
