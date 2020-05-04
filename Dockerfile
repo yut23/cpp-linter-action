@@ -7,7 +7,6 @@ LABEL com.github.actions.color="gray-dark"
 
 LABEL repository="https://github.com/AMReX-Astro/cpp-linter-action"
 
-WORKDIR /build
 RUN apt-get update
 RUN apt-get -qq -y install curl clang-tidy cmake jq clang cppcheck clang-format bear g++ gfortran 
 
