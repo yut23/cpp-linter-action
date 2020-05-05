@@ -14,6 +14,14 @@ inputs:
   ignore_files:
     description: 'A regex which clang-tidy uses to ignore files'
     required: false
+  header_filter:
+    description: 'Header filter regex to be used by clang-tidy'
+    required: false
+    default: '.*'
+  checks:
+    description: 'list of checks to be used by clang-tidy'
+    required: false 
+    default: 'bugprone-*,performance-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'
 
 runs:
   using: 'docker'

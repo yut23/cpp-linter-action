@@ -293,10 +293,13 @@ def main():
             if file_name_re.search(name):
                 if args.ignore_files:
                     ignore_file_re = re.compile(args.ignore_files)
-                    if ignore_file_re.search(name):
-                        continue
-                task_queue.put(name)
-
+                    if not ignore_file_re.search(name):
+                        print(name)
+                        task_queue.put(name)
+                else:
+                    print(name)
+                    task_queue.put(name)
+        
         # Wait for all threads to be done.
         task_queue.join()
         if len(failed_files):
