@@ -4,7 +4,7 @@
 REPO_PATH=$(pwd)
 ls $HOME
 
-cp /github/home/run-clang-tidy.py $INPUT_BUILD_PATH
+cp /usr/bin/run-clang-tidy.py $INPUT_BUILD_PATH
 
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
