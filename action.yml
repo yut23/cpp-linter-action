@@ -21,7 +21,7 @@ inputs:
   checks:
     description: 'list of checks to be used by clang-tidy'
     required: false 
-    default: 'bugprone-*,performance-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'
+    default: 'bugprone-*,performance-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-bounds-constant-array-index,-clang-diagnostic-unknown-warning-option,-clang-diagnostic-unknown-pragmas'
 
 runs:
   using: 'docker'
