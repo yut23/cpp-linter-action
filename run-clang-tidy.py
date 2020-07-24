@@ -167,7 +167,6 @@ def run_tidy(args, tmpdir, build_path, queue, lock, failed_files):
         proc = subprocess.Popen(
             invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = proc.communicate()
-        print(f"Error = {err}")
         if proc.returncode != 0:
             failed_files.append(name)
         with lock:
@@ -244,7 +243,6 @@ def main():
         build_path = find_compilation_database(db_path)
 
     try:
-        print("hi I'm making invocations like a Warlock")
         invocation = [args.clang_tidy_binary, '-list-checks']
         invocation.append('-p=' + build_path)
         if args.checks:
@@ -285,7 +283,6 @@ def main():
         failed_files = []
         lock = threading.Lock()
         for _ in range(max_task):
-            print("Hi I'm threading")
             t = threading.Thread(target=run_tidy,
                                  args=(args, tmpdir, build_path, task_queue, lock, failed_files))
             t.daemon = True
