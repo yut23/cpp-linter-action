@@ -8,7 +8,7 @@ LABEL com.github.actions.color="gray-dark"
 LABEL repository="https://github.com/AMReX-Astro/cpp-linter-action"
 
 RUN apt-get update
-RUN apt-get -qq -y install curl clang-tidy cmake jq clang cppcheck clang-format bear g++ gfortran 
+RUN apt-get -qq -y install curl clang-tidy cmake jq clang cppcheck clang-format bear g++=9.3 gfortran=9.3 
 
 COPY runchecks.sh /entrypoint.sh
 COPY run-clang-tidy.py /usr/bin/run-clang-tidy.py
