@@ -20,7 +20,7 @@ def run(SHAs=None, make_options='', header_filter='',
 
     problems = find_files(SHAs)
 
-    for prob_path, flags in problems:
+    for prob_path, flags in problems.items():
         make_command = ['bear', 'make', f'{make_options}', flags]
 
         with cd(f'Exec/{prob_path}'):
