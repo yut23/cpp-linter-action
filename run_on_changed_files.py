@@ -23,7 +23,12 @@ def run(SHAs=None, make_options='', header_filter='',
     for prob_path, flags in problems.items():
         make_command = ['bear', 'make', f'{make_options}', flags]
 
+        print(f'make command = {make_command')
+
         with cd(f'Exec/{prob_path}'):
+
+            print(f'making in Exec/{prob_path')
+            
             _, stderr = subprocess.Popen(make_command,
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT).communicate()
