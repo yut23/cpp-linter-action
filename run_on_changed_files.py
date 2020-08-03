@@ -27,8 +27,8 @@ def run(SHAs=None, make_options='', header_filter='',
 
         with cd(f'Exec/{prob_path}'):
 
-            print(f'making in Exec/{prob_path')
-            
+            print(f'making in Exec/{prob_path}')
+
             _, stderr = subprocess.Popen(make_command,
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT).communicate()
