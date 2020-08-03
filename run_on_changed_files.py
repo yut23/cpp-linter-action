@@ -21,7 +21,7 @@ def run(SHAs=None, make_options='', header_filter='',
     problems = find_files(SHAs)
 
     for prob_path, flags in problems.items():
-        make_command = ['bear', 'make', f'{make_options}', flags]
+        make_command = f'bear make {make_options} ' + flags
 
         print(f'make command = {make_command}')
 
@@ -29,26 +29,26 @@ def run(SHAs=None, make_options='', header_filter='',
 
             print(f'making in Exec/{prob_path}')
 
-            _, stderr = subprocess.Popen(make_command,
+            process = subprocess.run(make_command,
                                       stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT).communicate()
-            if stderr is not None:
+                                      stderr=subprocess.STDOUT,
+                                      shell=True)
+            if process.stderr is not None:
                 raise Exception('bear make encountered an error')
 
-            clang_tidy_command = ['python3', 'external/cpp-linter-action/run-clang-tidy.py', 
-                f'-header-filter={header_filter}', 
-                f'-ignore-files={ignore_files}', '-j', '2', 
-                f'-checks={input_checks}', r'>> $GITHUB_WORKSPACE/clang-tidy-report.txt']
+            clang_tidy_command = rf'python3 external/cpp-linter-action/run-clang-tidy.py -header-filter={header_filter} -ignore-files={ignore_files} -j 2 -checks={input_checks} >> $GITHUB_WORKSPACE/clang-tidy-report.txt'
+            print(f'clang_tidy_command = {clang_tidy_command}')
 
-            subprocess.Popen(clang_tidy_command,
+            subprocess.run(clang_tidy_command,
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT)
+                             stderr=subprocess.STDOUT,
+                             shell=TRUE)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-make-options',
-                        default='',
+                        default='-j 2',
                         help='make options')
     parser.add_argument('SHAs', nargs='*', default=None,
                         help='SHAs to be compared')
