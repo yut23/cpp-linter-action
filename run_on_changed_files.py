@@ -42,7 +42,7 @@ def run(SHAs=None, make_options='', header_filter='',
             subprocess.run(clang_tidy_command,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
-                             shell=TRUE)
+                             shell=True)
 
 
 if __name__ == '__main__':
