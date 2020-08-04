@@ -49,7 +49,7 @@ def run(SHAs=None, make_options='', header_filter='',
 
             print(process.stdout.decode('utf-8'))
 
-            with open('{GITHUB_WORKSPACE}/clang-tidy-report.txt', 'a') as f:
+            with open(f'{GITHUB_WORKSPACE}/clang-tidy-report.txt', 'a') as f:
                 f.write(process.stdout.decode('utf-8'))
 
 if __name__ == '__main__':
