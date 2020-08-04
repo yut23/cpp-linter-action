@@ -33,7 +33,7 @@ def run(SHAs=None, make_options='', header_filter='',
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       shell=True)
-            print(process.stdout)
+            print(process.stdout.decode('utf-8'))
             if process.stderr is not None:
                 raise Exception('bear make encountered an error')
 
@@ -44,6 +44,8 @@ def run(SHAs=None, make_options='', header_filter='',
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
                              shell=True)
+                             
+            process = print(process.stdout.decode('utf-8'))
 
 
 if __name__ == '__main__':
