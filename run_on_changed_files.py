@@ -39,7 +39,7 @@ def run(SHAs=None, make_options='', header_filter='',
             if process.stderr is not None:
                 raise Exception('bear make encountered an error')
 
-            clang_tidy_command = rf'python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -header-filter={header_filter} -ignore-files={ignore_files} -j 2 -checks={input_checks}'
+            clang_tidy_command = rf"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
             print(f'clang_tidy_command = {clang_tidy_command}')
 
             process = subprocess.run(clang_tidy_command,
