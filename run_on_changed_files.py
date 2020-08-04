@@ -20,6 +20,8 @@ def run(SHAs=None, make_options='', header_filter='',
 
     problems = find_files(SHAs)
 
+    GITHUB_WORKSPACE = os.environ.get('GITHUB_WORKSPACE')
+
     for prob_path, flags in problems.items():
         make_command = f'bear make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE' + flags
 
@@ -37,7 +39,7 @@ def run(SHAs=None, make_options='', header_filter='',
             if process.stderr is not None:
                 raise Exception('bear make encountered an error')
 
-            clang_tidy_command = rf'python3 external/cpp-linter-action/run-clang-tidy.py -header-filter={header_filter} -ignore-files={ignore_files} -j 2 -checks={input_checks}'
+            clang_tidy_command = rf'python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -header-filter={header_filter} -ignore-files={ignore_files} -j 2 -checks={input_checks}'
             print(f'clang_tidy_command = {clang_tidy_command}')
 
             process = subprocess.run(clang_tidy_command,
@@ -47,7 +49,7 @@ def run(SHAs=None, make_options='', header_filter='',
 
             print(process.stdout.decode('utf-8'))
 
-            with open(os.environ.get('GITHUB_WORKSPACE')+'/clang-tidy-report.txt', 'a') as f:
+            with open(os.environ.get(f'{GITHUB_WORKSPACE}/clang-tidy-report.txt', 'a') as f:
                 f.write(process.stdout.decode('utf-8'))
 
 if __name__ == '__main__':
