@@ -44,7 +44,7 @@ def run(SHAs=None, make_options='', header_filter='',
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
                              shell=True)
-                             
+
             process = print(process.stdout.decode('utf-8'))
 
 
@@ -57,9 +57,9 @@ if __name__ == '__main__':
                         help='SHAs to be compared')
     parser.add_argument('-header-filter', default='', 
     help='header filter')
-    parser.add_argument('-ignore-files', default='', 
+    parser.add_argument('-ignore-files', default='amrex|Microphysics', 
     help='ignore these files')
-    parser.add_argument('-input-checks', default='', 
+    parser.add_argument('-input-checks', default='bugprone-*,performance-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-bounds-constant-array-index,-clang-diagnostic-unknown-warning-option,-clang-diagnostic-unknown-pragmas,-readability-avoid-const-params-in-decls,-cppcoreguidelines-owning-memory', 
     help='input checks')
 
     args = parser.parse_args()
