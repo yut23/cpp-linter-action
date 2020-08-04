@@ -21,7 +21,7 @@ def run(SHAs=None, make_options='', header_filter='',
     problems = find_files(SHAs)
 
     for prob_path, flags in problems.items():
-        make_command = f'bear make {make_options} ' + flags
+        make_command = f'bear make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE' + flags
 
         print(f'make command = {make_command}')
 
@@ -49,7 +49,7 @@ def run(SHAs=None, make_options='', header_filter='',
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-make-options',
-                        default='-j 2',
+                        default='-j 2,
                         help='make options')
     parser.add_argument('SHAs', nargs='*', default=None,
                         help='SHAs to be compared')
