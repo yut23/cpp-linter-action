@@ -33,6 +33,7 @@ def run(SHAs=None, make_options='', header_filter='',
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT,
                                       shell=True)
+            print(process.stdout)
             if process.stderr is not None:
                 raise Exception('bear make encountered an error')
 
