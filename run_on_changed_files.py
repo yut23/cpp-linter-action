@@ -16,14 +16,15 @@ def cd(newdir):
 
 
 def run(SHAs=None, make_options='', header_filter='',
-        ignore_files='', input_checks=''):
+        ignore_files='', input_checks='', use_gpu=False, run_linter=False):
 
     problems = find_files(SHAs)
 
     GITHUB_WORKSPACE = os.environ.get('GITHUB_WORKSPACE')
 
     for prob_path, flags in problems.items():
-        make_command = f'bear make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE' + flags
+        cuda_flag = 'TRUE' if use_gpu else 'FALSE'
+        make_command = f'bear make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA={cuda_flag}' + flags
 
         print(f'make command = {make_command}')
 
@@ -39,18 +40,19 @@ def run(SHAs=None, make_options='', header_filter='',
             if process.stderr is not None:
                 raise Exception('bear make encountered an error')
 
-            clang_tidy_command = rf"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
-            print(f'clang_tidy_command = {clang_tidy_command}')
+            if run_linter:
+                clang_tidy_command = rf"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
+                print(f'clang_tidy_command = {clang_tidy_command}')
 
-            process = subprocess.run(clang_tidy_command,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT,
-                             shell=True)
+                process = subprocess.run(clang_tidy_command,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                shell=True)
 
-            print(process.stdout.decode('utf-8'))
+                print(process.stdout.decode('utf-8'))
 
-            with open(f'{GITHUB_WORKSPACE}/clang-tidy-report.txt', 'a') as f:
-                f.write(process.stdout.decode('utf-8'))
+                with open(f'{GITHUB_WORKSPACE}/clang-tidy-report.txt', 'a') as f:
+                    f.write(process.stdout.decode('utf-8'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
@@ -61,6 +63,10 @@ if __name__ == '__main__':
                         help='SHAs to be compared')
     parser.add_argument('-header-filter', default='', 
     help='header filter')
+    parser.add_argument('-gpu', action='store_true', 
+    help='compile with GPU')
+    parser.add_argument('-run-linter', action='store_true', 
+    help='Run C++ linter')
     parser.add_argument('-ignore-files', default='amrex|Microphysics', 
     help='ignore these files')
     parser.add_argument('-input-checks', default='bugprone-*,performance-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-bounds-constant-array-index,-clang-diagnostic-unknown-warning-option,-clang-diagnostic-unknown-pragmas,-readability-avoid-const-params-in-decls,-cppcoreguidelines-owning-memory', 
@@ -70,4 +76,5 @@ if __name__ == '__main__':
 
     run(SHAs=args.SHAs, make_options=args.make_options, 
         header_filter=args.header_filter, 
-        ignore_files=args.ignore_files, input_checks=args.input_checks)
+        ignore_files=args.ignore_files, input_checks=args.input_checks,
+        use_gpu=args.gpu, run_linter=args.run_linter)
