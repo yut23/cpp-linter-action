@@ -24,7 +24,15 @@ def run(SHAs=None, make_options='', header_filter='',
 
     for prob_path, flags in problems.items():
         cuda_flag = 'TRUE' if use_gpu else 'FALSE'
-        make_command = f'bear make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA={cuda_flag}' + flags
+        if run_linter:
+            make_command = 'bear '
+        else:
+            make_command = ''
+            
+        if use_gpu:
+            make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=TRUE CUDA_ARCH=60' + flags
+        else:
+            make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE' + flags
 
         print(f'make command = {make_command}')
 
