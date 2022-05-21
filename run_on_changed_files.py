@@ -40,9 +40,8 @@ def run(SHAs=None, make_options='', header_filter='',
 
             print(f'making in Exec/{prob_path}')
 
-            process = subprocess.run(make_command, shell=True)
-            if process.returncode != 0:
-                raise Exception('bear make encountered an error')
+            # this will raise a CalledProcessError if the command fails
+            subprocess.run(make_command, shell=True, check=True)
 
             if run_linter:
                 clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
