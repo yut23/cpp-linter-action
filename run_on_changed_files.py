@@ -30,9 +30,9 @@ def run(SHAs=None, make_options='', header_filter='',
             make_command = ''
             
         if use_gpu:
-            make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=TRUE CUDA_ARCH=60' + flags
+            make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=TRUE CUDA_ARCH=60 ' + flags
         else:
-            make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE' + flags
+            make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE ' + flags
 
         print(f'make command = {make_command}')
 
@@ -40,27 +40,15 @@ def run(SHAs=None, make_options='', header_filter='',
 
             print(f'making in Exec/{prob_path}')
 
-            process = subprocess.run(make_command,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT,
-                                      shell=True)
-            print(process.stdout.decode('utf-8'))
-            if process.stderr is not None:
-                raise Exception('bear make encountered an error')
+            # this will raise a CalledProcessError if the command fails
+            subprocess.run(make_command, shell=True, check=True)
 
             if run_linter:
-                clang_tidy_command = rf"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
+                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
                 print(f'clang_tidy_command = {clang_tidy_command}')
+                clang_tidy_command += f" | tee -a {GITHUB_WORKSPACE}/clang-tidy-report.txt"
 
-                process = subprocess.run(clang_tidy_command,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT,
-                                shell=True)
-
-                print(process.stdout.decode('utf-8'))
-
-                with open(f'{GITHUB_WORKSPACE}/clang-tidy-report.txt', 'a') as f:
-                    f.write(process.stdout.decode('utf-8'))
+                subprocess.run(clang_tidy_command, shell=True)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
