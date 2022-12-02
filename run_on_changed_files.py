@@ -25,7 +25,7 @@ def run(SHAs=None, make_options='', header_filter='',
     for prob_path, flags in problems.items():
         cuda_flag = 'TRUE' if use_gpu else 'FALSE'
         if run_linter:
-            make_command = 'bear '
+            make_command = 'bear -- '
         else:
             make_command = ''
             
