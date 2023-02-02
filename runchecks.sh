@@ -7,7 +7,7 @@ cp /usr/bin/run-clang-tidy.py $INPUT_BUILD_PATH
 
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
-bear make $INPUT_MAKE_OPTIONS || exit $?
+bear -- make $INPUT_MAKE_OPTIONS || exit $?
 
 clang-tidy --version
 python3 run-clang-tidy.py -header-filter=$INPUT_HEADER_FILTER -ignore-files=$INPUT_IGNORE_FILES -j 2 -checks=$INPUT_CHECKS > $GITHUB_WORKSPACE/clang-tidy-report.txt
