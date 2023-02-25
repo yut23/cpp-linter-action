@@ -1,4 +1,4 @@
-FROM python:latest
+FROM ubuntu:latest
 
 LABEL com.github.actions.name="c-linter check"
 LABEL com.github.actions.description="Lint your code with clang-tidy in parallel to your builds"
