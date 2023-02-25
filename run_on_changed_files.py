@@ -2,6 +2,7 @@ from find_changed_files import find_files
 import subprocess 
 import sys 
 import argparse
+import shlex
 from contextlib import contextmanager
 import os
 
@@ -44,7 +45,10 @@ def run(SHAs=None, make_options='', header_filter='',
             subprocess.run(make_command, shell=True, check=True)
 
             if run_linter:
-                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -checks={input_checks}"
+                header_filter = shlex.quote(header_filter)
+                ignore_files = shlex.quote(ignore_files)
+                input_checks = shlex.quote(input_checks)
+                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files={ignore_files} -checks={input_checks}"
                 print(f'clang_tidy_command = {clang_tidy_command}')
                 clang_tidy_command += f" | tee -a {GITHUB_WORKSPACE}/clang-tidy-report.txt"
 
