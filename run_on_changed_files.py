@@ -1,4 +1,6 @@
 import argparse
+import shlex
+from contextlib import contextmanager
 import os
 import subprocess
 from contextlib import contextmanager
@@ -44,7 +46,9 @@ def run(SHAs=None, make_options='', header_filter='',
             subprocess.run(make_command, shell=True, check=True)
 
             if run_linter:
-                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files='{ignore_files}' -config-file={config_file}"
+                header_filter = shlex.quote(header_filter)
+                ignore_files = shlex.quote(ignore_files)
+                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files={ignore_files} -config-file={config_file}"
                 print(f'clang_tidy_command = {clang_tidy_command}')
                 clang_tidy_command += f" | tee -a {GITHUB_WORKSPACE}/clang-tidy-report.txt"
 
