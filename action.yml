@@ -7,7 +7,7 @@ branding:
 inputs:
   build_path:
     description: 'Path to executable'
-    required: true 
+    required: true
   make_options:
     description: 'Makefile options to be used by clang-tidy'
     required: false
@@ -18,10 +18,10 @@ inputs:
     description: 'Header filter regex to be used by clang-tidy'
     required: false
     default: '.*'
-  checks:
-    description: 'list of checks to be used by clang-tidy'
-    required: false 
-    default: 'bugprone-*,performance-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-bounds-constant-array-index,-clang-diagnostic-unknown-warning-option,-clang-diagnostic-unknown-pragmas,-readability-avoid-const-params-in-decls'
+  config_file:
+    description: 'path to configuration file'
+    required: false
+    default: '.clang-tidy'
 
 runs:
   using: 'docker'
