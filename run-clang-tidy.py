@@ -21,19 +21,13 @@ Example invocations.
   set of checks and show warnings in the cpp files and all project headers.
     run-clang-tidy.py $PWD
 
-- Fix all header guards.
-    run-clang-tidy.py -fix -checks=-*,llvm-header-guard
-
-- Fix all header guards included from clang-tidy and header guards
-  for clang-tidy headers.
-    run-clang-tidy.py -fix -checks=-*,llvm-header-guard extra/clang-tidy \
-                      -header-filter=extra/clang-tidy
+  This version takes a -config-file argument that specifies the location of
+  a .clang-tidy file
 
 Compilation database setup:
 http://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
 """
 
-from __future__ import print_function
 
 import argparse
 import glob
@@ -78,15 +72,15 @@ def make_absolute(f, directory):
     return os.path.normpath(os.path.join(directory, f))
 
 
-def get_tidy_invocation(f, clang_tidy_binary, checks, tmpdir, build_path,
+def get_tidy_invocation(f, clang_tidy_binary, config_file, tmpdir, build_path,
                         header_filter, extra_arg, extra_arg_before, quiet,
                         config):
     """Gets a command line for clang-tidy."""
     start = [clang_tidy_binary]
     if header_filter is not None:
         start.append('-header-filter=' + header_filter)
-    if checks:
-        start.append('-checks=' + checks)
+    if config_file:
+        start.append('--config-file=' + config_file)
     if tmpdir is not None:
         start.append('-export-fixes')
         # Get a temporary file. We immediately close the handle so clang-tidy can
@@ -114,7 +108,7 @@ def merge_replacement_files(tmpdir, mergefile):
     mergekey = "Diagnostics"
     merged = []
     for replacefile in glob.iglob(os.path.join(tmpdir, '*.yaml')):
-        content = yaml.safe_load(open(replacefile, 'r'))
+        content = yaml.safe_load(open(replacefile))
         if not content:
             continue  # Skip empty files.
         merged.extend(content.get(mergekey, []))
@@ -159,7 +153,7 @@ def run_tidy(args, tmpdir, build_path, queue, lock, failed_files):
     """Takes filenames out of queue and runs clang-tidy on them."""
     while True:
         name = queue.get()
-        invocation = get_tidy_invocation(name, args.clang_tidy_binary, args.checks,
+        invocation = get_tidy_invocation(name, args.clang_tidy_binary, args.config_file,
                                          tmpdir, build_path, args.header_filter,
                                          args.extra_arg, args.extra_arg_before,
                                          args.quiet, args.config)
@@ -189,9 +183,8 @@ def main():
     parser.add_argument('-clang-apply-replacements-binary', metavar='PATH',
                         default='clang-apply-replacements',
                         help='path to clang-apply-replacements binary')
-    parser.add_argument('-checks', default=None,
-                        help='checks filter, when not specified, use clang-tidy '
-                        'default')
+    parser.add_argument('-config-file', default=".clang-tidy",
+                        help='configuration file path')
     parser.add_argument('-config', default=None,
                         help='Specifies a configuration in YAML/JSON format: '
                         '  -config="{Checks: \'*\', '
@@ -245,8 +238,8 @@ def main():
     try:
         invocation = [args.clang_tidy_binary, '-list-checks']
         invocation.append('-p=' + build_path)
-        if args.checks:
-            invocation.append('-checks=' + args.checks)
+        if args.config_file:
+            invocation.append('--config-file=' + args.config_file)
         invocation.append('-')
         if args.quiet:
             # Even with -quiet we still want to check if we can call clang-tidy.
