@@ -260,9 +260,11 @@ def main():
     if max_task == 0:
         max_task = multiprocessing.cpu_count()
 
+    if args.fix:
+        check_clang_apply_replacements_binary(args)
+
     tmpdir = None
     if args.fix or (yaml and args.export_fixes):
-        check_clang_apply_replacements_binary(args)
         tmpdir = tempfile.mkdtemp()
 
     # Build up a big regexy filter from all command line arguments.
