@@ -36,11 +36,11 @@ def run(SHAs=None, make_options='', header_filter='',
         else:
             make_command += f'make {make_options} USE_MPI=FALSE USE_OMP=FALSE USE_CUDA=FALSE ' + flags
 
-        print(f'make command = {make_command}')
+        print(f'make command = {make_command}', flush=True)
 
         with cd(f'Exec/{prob_path}'):
 
-            print(f'making in Exec/{prob_path}')
+            print(f'making in Exec/{prob_path}', flush=True)
 
             # this will raise a CalledProcessError if the command fails
             subprocess.run(make_command, shell=True, check=True)
@@ -49,7 +49,7 @@ def run(SHAs=None, make_options='', header_filter='',
                 header_filter = shlex.quote(header_filter)
                 ignore_files = shlex.quote(ignore_files)
                 clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files={ignore_files} -config-file={config_file} -export-fixes={GITHUB_WORKSPACE}/clang-tidy-report.yaml"
-                print(f'clang_tidy_command = {clang_tidy_command}')
+                print(f'clang_tidy_command = {clang_tidy_command}', flush=True)
                 clang_tidy_command += f" | tee -a {GITHUB_WORKSPACE}/clang-tidy-report.txt"
 
                 subprocess.run(clang_tidy_command, shell=True)
