@@ -14,4 +14,12 @@ python3 run-clang-tidy.py -header-filter=$INPUT_HEADER_FILTER -ignore-files=$INP
 
 cd $REPO_PATH
 
-cppcheck --enable=all --force --std=c++11 --language=c++ --output-file=$GITHUB_WORKSPACE/cppcheck-report.txt *
+cppcheck_ignores=()
+# extract the directories to ignore from INPUT_IGNORE_FILES (split on '|')
+IFS='|' read -ra ignore_files <<<"$INPUT_IGNORE_FILES"
+for file in "${ignore_files[@]}"; do
+  # after checking the source code, -i also accepts globs
+  cppcheck_ignores+=(-i "*/$file/*")
+done
+
+cppcheck --enable=all --force --std=c++11 --language=c++ --project=$INPUT_BUILD_PATH/compile_commands.json "${cppcheck_ignores[@]}" --output-file=$GITHUB_WORKSPACE/cppcheck-report.txt
