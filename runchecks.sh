@@ -22,4 +22,4 @@ for file in "${ignore_files[@]}"; do
   cppcheck_ignores+=(-i "*/$file/*")
 done
 
-cppcheck --enable=all --force --std=c++11 --language=c++ --project=$INPUT_BUILD_PATH/compile_commands.json "${cppcheck_ignores[@]}" --output-file=$GITHUB_WORKSPACE/cppcheck-report.txt
+cppcheck --enable=all --std=c++17 --language=c++ --project=$INPUT_BUILD_PATH/compile_commands.json "${cppcheck_ignores[@]}" --output-file=$GITHUB_WORKSPACE/cppcheck-report.txt
