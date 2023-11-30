@@ -7,10 +7,15 @@ cp /usr/bin/run-clang-tidy.py $INPUT_BUILD_PATH
 
 cd $INPUT_BUILD_PATH
 # make the compile command database using bear
+echo '::group::Run make to generate a compilation database'
 bear -- make $INPUT_MAKE_OPTIONS || exit $?
+echo '::endgroup::'
 
+echo '::group::Run clang-tidy'
 clang-tidy --version
+echo
 python3 run-clang-tidy.py -header-filter=$INPUT_HEADER_FILTER -ignore-files=$INPUT_IGNORE_FILES -j 2 -config-file=$GITHUB_WORKSPACE/.clang-tidy > $GITHUB_WORKSPACE/clang-tidy-report.txt
+echo '::endgroup::'
 
 # extract -I directories from the compilation database into a shell array
 includes=()
@@ -37,5 +42,9 @@ for file in "${ignore_files[@]}"; do
   done
 done
 
+echo '::group::Run cppcheck'
 cppcheck --version
+echo "extra cppcheck arguments: ${cppcheck_args[*]}"
+echo
 cppcheck --enable=all --force --std=c++17 --language=c++ --project=compile_commands.json "${cppcheck_args[@]}" --output-file=$GITHUB_WORKSPACE/cppcheck-report.txt
+echo '::endgroup::'
