@@ -22,6 +22,9 @@ inputs:
     description: 'path to configuration file'
     required: false
     default: '.clang-tidy'
+  cppcheck_options:
+    description: 'Extra options to pass to cppcheck, separated by spaces'
+    required: false
 
 runs:
   using: 'docker'
