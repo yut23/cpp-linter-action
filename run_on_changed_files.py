@@ -48,7 +48,7 @@ def run(SHAs=None, make_options='', header_filter='',
             subprocess.run(make_command, shell=True, check=True)
 
             if run_linter:
-                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 2 -header-filter={header_filter} -ignore-files={ignore_files} -config-file={config_file}"
+                clang_tidy_command = f"python3 {GITHUB_WORKSPACE}/external/cpp-linter-action/run-clang-tidy.py -j 4 -header-filter={header_filter} -ignore-files={ignore_files} -config-file={config_file}"
                 print(f'clang_tidy_command = {clang_tidy_command}')
                 clang_tidy_command += f" | tee -a {GITHUB_WORKSPACE}/clang-tidy-report.txt"
 
@@ -57,7 +57,7 @@ def run(SHAs=None, make_options='', header_filter='',
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-make-options',
-                        default='-j 2',
+                        default='-j 4',
                         help='make options')
     parser.add_argument('SHAs', nargs='*', default=None,
                         help='SHAs to be compared')

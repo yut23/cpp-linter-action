@@ -14,7 +14,7 @@ echo '::endgroup::'
 echo '::group::Run clang-tidy'
 clang-tidy --version
 echo
-python3 run-clang-tidy.py -header-filter=$INPUT_HEADER_FILTER -ignore-files=$INPUT_IGNORE_FILES -j 2 -config-file=$GITHUB_WORKSPACE/.clang-tidy > $GITHUB_WORKSPACE/clang-tidy-report.txt
+python3 run-clang-tidy.py -header-filter=$INPUT_HEADER_FILTER -ignore-files=$INPUT_IGNORE_FILES -j 4 -config-file=$GITHUB_WORKSPACE/.clang-tidy > $GITHUB_WORKSPACE/clang-tidy-report.txt
 echo '::endgroup::'
 
 # extract -I directories from the compilation database into a shell array
